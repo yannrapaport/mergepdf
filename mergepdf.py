@@ -1,41 +1,39 @@
 import argparse
 from PyPDF2 import PdfReader, PdfWriter
 
+def merge_pdfs(odd_path, even_path, output_path):
+    pdf_odd = PdfReader(odd_path)
+    pdf_even = PdfReader(even_path)
+    even_pages = list(reversed(pdf_even.pages))
+
+    writer = PdfWriter()
+    for i in range(max(len(pdf_odd.pages), len(even_pages))):
+        if i < len(pdf_odd.pages):
+            writer.add_page(pdf_odd.pages[i])
+        if i < len(even_pages):
+            writer.add_page(even_pages[i])
+
+    with open(output_path, "wb") as f:
+        writer.write(f)
+
 def main():
-    parser = argparse.ArgumentParser(description="Fusionner des fichiers PDF impairs et pairs.")
-    parser.add_argument('-i', '--impairs', help="Chemin du fichier PDF des pages impaires", required=False)
-    parser.add_argument('-p', '--pairs', help="Chemin du fichier PDF des pages paires", required=False)
-    parser.add_argument('-o', '--output', help="Chemin du fichier PDF de sortie", required=False, default="output.pdf")
-    parser.add_argument('impairs_positional', nargs='?', help="Chemin du fichier PDF des pages impaires (positionnel)")
-    parser.add_argument('pairs_positional', nargs='?', help="Chemin du fichier PDF des pages paires (positionnel)")
+    parser = argparse.ArgumentParser(description="Merge odd and even PDF files.")
+    parser.add_argument('-i', '--odd', help="Path to the odd pages PDF", required=False)
+    parser.add_argument('-p', '--even', help="Path to the even pages PDF", required=False)
+    parser.add_argument('-o', '--output', help="Path for the output merged PDF", required=False, default="output.pdf")
+    parser.add_argument('odd_positional', nargs='?', help="Path to the odd pages PDF (positional)")
+    parser.add_argument('even_positional', nargs='?', help="Path to the even pages PDF (positional)")
 
     args = parser.parse_args()
 
-    # Déterminer les chemins des fichiers impairs et pairs
-    impairs_path = args.impairs if args.impairs else args.impairs_positional
-    pairs_path = args.pairs if args.pairs else args.pairs_positional
+    # Determine file paths
+    odd_path = args.odd if args.odd else args.odd_positional
+    even_path = args.even if args.even else args.even_positional
 
-    if not impairs_path or not pairs_path:
-        parser.error("Les chemins des fichiers impairs et pairs doivent être spécifiés.")
+    if not odd_path or not even_path:
+        parser.error("Both odd and even PDF file paths must be specified.")
 
-    # Lire les fichiers PDF
-    pdf_impairs = PdfReader(impairs_path)
-    pdf_pairs_inverses = PdfReader(pairs_path)
-
-    # Réordonner les pages paires (inversées à l'origine)
-    pages_pairs = list(reversed(pdf_pairs_inverses.pages))
-
-    # Fusionner les pages en alternant une impaire et une paire
-    writer = PdfWriter()
-    for i in range(max(len(pdf_impairs.pages), len(pages_pairs))):
-        if i < len(pdf_impairs.pages):
-            writer.add_page(pdf_impairs.pages[i])
-        if i < len(pages_pairs):
-            writer.add_page(pages_pairs[i])
-
-    # Exporter le fichier final fusionné
-    with open(args.output, "wb") as f:
-        writer.write(f)
+    merge_pdfs(odd_path, even_path, args.output)
 
 if __name__ == "__main__":
     main()

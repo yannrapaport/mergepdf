@@ -24,16 +24,16 @@ A Python utility to merge odd and even pages from separate PDF files into a sing
 ## Usage
 
 ```bash
-python mergepdf.py [-h] [-i IMPAIRS] [-p PAIRS] [-o OUTPUT] [impairs_positional] [pairs_positional]
+python mergepdf.py [-h] [-i ODD] [-p EVEN] [-o OUTPUT] [odd_positional] [even_positional]
 ```
 
 ### Arguments:
 
-* `-i, --impairs`: Path to the PDF file containing odd pages
-* `-p, --pairs`: Path to the PDF file containing even pages
+* `-i, --odd`: Path to the PDF file containing odd pages
+* `-p, --even`: Path to the PDF file containing even pages
 * `-o, --output`: Path to the output PDF file
-* `impairs_positional`: Path to odd pages PDF file (positional argument)
-* `pairs_positional`: Path to even pages PDF file (positional argument)
+* `odd_positional`: Path to odd pages PDF file (positional argument)
+* `even_positional`: Path to even pages PDF file (positional argument)
 
 ### Example:
 
